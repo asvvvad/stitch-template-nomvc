@@ -10,4 +10,4 @@ This is a Stitch template with no MVC structure.
 `composer update` 
 
 ## Documentation
-Refer to the [documentation](#docs) for more information.
+Refer to the [documentation](http://stitch.asvvvad.eu.org/#docs) for more information.

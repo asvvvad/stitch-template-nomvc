@@ -1,0 +1,232 @@
+<?php $v->layout('layouts/layout') ?>
+<div class="tacenter vh-100 bg-info white">
+    <div class="vc">
+        <h1 class="mega white"><?= $v($header) ?></h1>
+        <p><?= $v($description) ?></p>
+        <div class="mv inline"><a class="btn pill ph bg-black white" href="https://github.com/asvvvad/stitch"><b>Github</b></a></div>
+        <div class="mv inline"><a class="btn pill ph bg-white info" href="#docs"><b>Documentation</b></a></div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="content">
+        <h1 id="docs">Documentation</h1>
+        Stitch is <em>truely micro</em> modular PHP framework that wraps FastRoute, Plates, and Medoo. It was made to:
+        <ul>
+            <li>Write less code.</li>
+            <li>Build small but modern websites and apps that can be hosted anywhere PHP is accepted.</li>
+            <li>Prototype APIs and websites very fast.</li>
+            <li>Shared and free hosting friendly sites with routing.</li>
+            <li>Enjoy routing and templating without the hasstle of having to use a big framework nor stitching up libraries to make things work.</li>
+        </ul>
+        <h2 id="features">Features</h2>
+        Despite its small size, it packs many helpful and missing features:
+        <ul>
+            <li>Enirely customziable: The <code>.env</code> file controls:
+                <ul>
+                    <li><b>Database</b>: change between different database types without touching the code. Disabling it is as simple as not setting a type</li>
+                    <li><b>Directory structure</b>: as flexible as possible to adapt to whatever environement you're running it on, even free shared hosting!</li>
+                    <li><b>Views</b>: By setting a CONTROLLERS and ROUTES directory you switch to an MVC oriented approach. Take it off and you can just set your routes in the index file for quick prototying!</li>
+                    <li>Also works out of the box by just downloading a <a href="#templates">template</a> and running it on a server.</li>
+                </ul>
+            </li>
+            <li>Wraps powerful, tested, and easy libraries providing all that's needed without bloat while letting you extend however you like:
+                <ul>
+                    <li><a href="https://github.com/nikic/fastroute">FastRoute</a>, <a href="platesphp.com/">Plates<a>, and <a href="https://medoo.in">Medoo</a>. It also uses the <a href="https://github.com/vlucas/phpdotenv">phpdotenv</a> library to handle the configuration.<br>Those are all direct dependencies. Indirect ones are from phpdotenv and they're phpoption and symfony/polyfill-ctype only.</li>
+                </ul>
+            </li>
+            <li>Sending a <a href="#response">response</a> is straightforward: send <b>HTML</b> (templates and raw), <b>JSON</b> (with JSON POST request support), <b>redirects</b>, any other content using <code><b>content-type</b></code> header easily!
+        </ul>
+        </ul>
+        <h2>Getting started</h2>
+        As with all frameworks, you need to have some things in place before using it. Stitch doesn't enfore any structure all you need is the <code>.env</code> file for configuration.
+        This part goes through how to create your own structure to understand how customizable it is but it's pretty simple so you'll figure it out if you also just download one of the templates I made and mess around:<br>
+        <div class="row tacenter mv" id="templates">
+            <div class="6 col card">
+                <h2>MVC oriented</h2>
+                <p>Controllers and routes have their own directories and they're loaded automatically to maintain a clean code. You can still use anonymous functions in the routes.</p>
+                <a class="btn pill ph bg-info white" target="_blank" href="https://github.com/asvvvad/stitch-template-mvc"><b>Download</b></a><br>
+                <p class="nano">git clone https://github.com/asvvvad/stitch-template-mvc</p>
+            </div>
+            <div class="6 col card">
+                <h2>No MVC</h2>
+                <p>Simply add routes using anonymous functions which can be in any file or in the index. Just include them before running <code>$stitch->run()</code></p>
+                <a class="btn pill ph bg-info white" target="_blank" href="https://github.com/asvvvad/stitch-template-nomvc"><b>Download</b></a><br>
+                <p class="nano">git clone https://github.com/asvvvad/stitch-template-nomvc</p>
+            </div>
+        </div>
+        <blockquote class="p bg-warning black small b-accent"><span class="large">Note!</span><br>There is only a structural difference. Both build this website you're reading. You can use the non-controller methods in the MVC ones as well just like you can put a <a href="#mvc-env">couple lines</a> in your <code class="bg-warning b-black black small">.env</code> and you'll have an MVC system.</div>
+        <pre id="instantiate"><code>$stitch = new Stitch('../data_directory');</code></pre>
+        That's how to instantiate Stitch. The parameter is the directory where the <code>.env</code> file is and other content that shouldn't be public. So keep it out of the document root. However that isn't forced since sometimes you can't or just don't want to which is understandable if you're just prototyping. Just make sure they're not accessible by using .htaccess rules or something equivilant.
+        <pre><code>try {
+	$stitch->run();
+} catch (\Throwable $th) {
+	throw $th;
+}</code></pre>
+        And that's the code to run it. There's only one exception for now which forces the handler to be either an array or a string.
+        <br>
+        Now what? There got to be routes and content. Routes can be defined in a few ways as mentioned before. However don't panic the next part covers that well.
+        <h4>The <code>.env</code> file</h4>
+        Before we go to the routes. We have to set up the <code>.env</code> file. I made two template projcets that you can download and use the .env.example in directly but for the sake of explanation and trying to be free I'll cover the elements of the <code>.env</code> File.
+        <pre id="env"><code>DB_DATABASE_TYPE=mysql
+DB_SERVER=127.0.0.1
+DB_PORT=3306
+DB_DATABASE_NAME=
+DB_USERNAME=
+DB_PASSWORD=
+
+ROOT=".."
+WWW=${ROOT}/www
+STATIC_DATA=${DATA}/static_data
+TEMPLATES=${DATA}/templates/
+VIEWS=./views
+
+CONTROLLERS=${DATA}/app/controllers/
+ROUTES=${DATA}/app/routes/
+
+ASSETS=/assets
+CSS=${ASSETS}/css
+
+CACHE_FILE=${STATIC_DATA}/route.cache
+CACHE_DISABLED=true</code></pre>
+        That is a full <code>.env</code> configuration for Stitch using an MVC Approach. Lets break it down:<br><br>
+        First, The <code>DB_*</code> variables are Medoo database options. You can see more about them in the <a target="_blank" href="https://medoo.in/api/">Medoo documentation</a>. Their name is Medoo's actual options prefixed with <code>DB_</code> and converted to uppercase.<br>
+        This maintain simplicity and you can use any option supported by Medoo.<br><br>
+        Second, it's the directory structure. So the ROOT is the directory that contain both the public directory <code>WWW</code> and the data private directory <code>DATA</code>. The thing is you can <em>remove <code>ROOT</code></em> entirely and set <code>DATA</code> and <code>WWW</code> to any path you want since it isn't used it framework but only in the <code>.env</code><br>
+        The <code>STATIC_DATA</code> is only used in the templates where the image for the <a href="#different-content-types">different content type</a> is.
+        <div class="p mv bg-info white small rounded"><span class="large">Reminder!</span><br>You set the DATA directory when you <a href="#instantiate"> instantiate Stitch</a>.</div>
+        You can even set <code>WWW</code> and <code>DATA</code> to the same directory.<br><br>
+        Third, the templates and views. TEMPLATES is the path to pass to Plates. You may remove it to disable plates if you don't want to use views. To use another templating library <a href="#plates-alt">see this</a> You can only access templates that are under it. VIEWS however is Stitch-specific and is used for when displaying a view. You can set it to <code>.</code> if you prefer to have everything under templates and when you return a view name Stitch will get it from TEMPLATES or anywhere you set it.<br><br>
+        Fourth, <code>CONTROLLERS</code> and <code>ROUTES</code> directories. When these are present Stitch automatically autoload content in them allowing you to write your routes in the MVC approach. They can be anywhere as well.<br>
+        <div class="p mv bg-warning black small rounded"><span class="large">Warning!</span><br>To disable database or MVC structure <em>remove</em> the variables <b>not</b> set them empty.</div><br>
+        Finally, The <code>CACHE_FILE</code> and <code>CACHE_DISABLED</code>. These are configurations for FastRoute's SimpleDispatcher' cache options. They must be present.
+        <h2 id="routes">Routes</h2>
+        <h3>Syntax</h3>
+        <pre><code>Stitch:addRoute('METHOD', '/route/uri[/{optional}]', handler);</code></pre>
+        As a shortcut, you can use <code>Stitch::get()</code>, <code>Stitch::post()</code>, <code>Stitch::head()</code>, <code>Stitch::delete()</code>, <code>Stitch::put()</code>, and <code>Stitch::patch()</code>.
+        There are many ways you can define a route in Stitch. The reason for that is to make Stitch flexible with any project of any size. Just like PHP is.<br>
+        <h3>MVC way</h3>
+        It offers the ability to use Controllers like all modern frameworks. Similar to laravel, routes directory contain <code>.php</code> files that define the routes. And the controllers directory to have the controller classes.<br>
+        Stitch don't like to force things on you but still try to make it as easy as possible. So to use that approach make sure your <code>.env</code> file have these two lines:
+        <pre><code id="mvc-env">CONTROLLERS=/path/to/controllers/
+ROUTES=/path/to/routes/</code></pre>
+        Stitch will autoload everything for you.<br><br>
+        With this approach you do something like this, the return type may change depending on the <a href="#response">response</a>. If your route don't use URI variables you may omit the <code>$vars</code> variable.<br>
+        In <code>controllers/ApiController.php</code>:
+        <pre><code>&lt;?php
+/**
+ * Controller for API routes
+ */
+class ApiController
+{
+    /**
+     * version returns the service version
+     *
+     * @return array
+     **/
+    static public function version(array $vars) : array
+    {
+        return ['body' => ['success' => true, 'version' => 'v0.1']];
+    }
+}</code></pre>
+        And for the route in <code>routes/api.php</code> The file name can be anything.
+        <pre><code>&lt;?php
+Stitch::get('/api/v1/version', 'ApiController::version');</code></pre>
+        <h3>Anonymous function</h3>
+        You can just put the routes definitions in the index file or wherever you like as long as you include them <em><b>before</b></em> calling <code >$stitch::run()</code>.<br>
+        You just use one of these methods:
+        <pre><code>Stitch::addRoute('GET', '/', function(array $vars): array {
+    return ['view' => 'home'];
+}</code></pre>
+        <h3>One-liner, just output.</h3>
+        If the anonymous function isn't short enough for you, see <a href="#no-proccessing-2">method two of the no-proccessing method</a> to write one-liner routes. ;)
+        <div class="p mv bg-warning black small rounded"><span class="large">Warning!</span><br>When not using MVC way, make sure to put the routes or include them <em><b>before</b></em> calling <code class="bg-warning small black b-black">$stitch::run()</code></div>
+        <h3>Variables and JSON data</h3>
+        Stitch uses FastRoutes and does no modification to how it handle the URI route so you should refer to it for further documentation.<br>
+        <p><a href="/echo/name">/echo[/{name}]</a> <b class="p04 rounded bg-info white small">post</b></p>
+        <pre><code>return [
+'body' => [
+    'success' => isset($_POST['message']),
+    'message' => $_POST['message'] ?? 'Message not specified',
+    'name' => $vars['name'] ?? 'Name not set',
+],
+'status_code' => isset($_POST['message']) ? 200 : 400
+];</code></pre>
+        One of the things Stitch add is support for JSON data in POST requests. Which allow you to do this.<br>
+        <pre><code>curl -i -X post -d '<b>{"message":"help"}</b>' <b>http://localhost</b>/echo/name</code></pre>
+        <h2 id='response'>Response types</h2>
+        <h3>Templates & views</h3>
+        No echos or nonsense; just return the view name with an optional data array.
+        <p><a href="/">/</a> <b class="p04 rounded bg-info white small">get</b><br></p>
+        <pre><code>return ['view' => 'home', 'data' => ['title' => 'Stitch']];</code></pre>
+        <h3>JSON response</h3>
+        If you set the body to an array it'll be converted to JSON and the proper <code>content-type</code> headers will be sent
+        <p><a href="/api/v1/version">/api/v1/version</a> <b class="p04 rounded bg-info white small">get</b></p>
+        <pre><code>return ['body' => ['success' => true, 'version' => 'v0.1']];</code></pre>
+        <h3>Redirects</h3>
+        These are made simple and to the point as well.<br><code>status_code</code> is optional.
+        <p><a href="/old">/old</a> <b class="p04 rounded bg-info white small">get</b></p>
+        <pre><code>return ['redirect' => '/', 'status_code' => 301];</code></pre>
+        <h3 id="no-proccessing">No proccessing</h3>
+        This can be used to return an HTML string that will be printed out without proccessing.<br>
+        This can also be used to print out <a href="#different-content-types">different content types</a>.
+        <h4 id="no-proccessing-1">Method one: From inside a handler method/function</h4>
+        <pre><code>return "custom HTML. &lt;b&gt;bold&lt;/b&gt;"</code></pre>
+        <h4 id="no-proccessing-2">Method two: Setting the handler parameter to a string that isn't callable</h4>
+        <p><a href="/handle">/handle</a> <b class="p04 rounded bg-info white small">get</b></p>
+        <pre><code>Stitch::get('/handle', 'This route has been &lt;em&gt;handled&lt;/em&gt;');</code></pre>
+        <b>Note:</b> in the second method you can pass a function that returns a string as well.
+        <p><a href="/uppercase?text=hello, world">/uppercase</a> <b class="p04 rounded bg-info white small">get</b><br></p>
+        <pre><code>Stitch::get('/uppercase', isset($_GET['text']) ? strtoupper($_GET['text']) : 'Pass the text as a GET parameter.');</code></pre>
+
+        <h3>Headers</h3>
+        Stitch allow you to set headers easily in the returned array. it can be sent alone, with views, or any type of body.
+        <pre><code>return ['header' => ['ONION-ADDRESS', 'asvvvadzqpxmkfjc.onion']];</code></pre>
+        <h3 id="different-content-types">Different content types</h3>
+        <p><a href="/image">/image</a> <b class="p04 rounded bg-info white small">get</b></p>
+        <pre><code>return ['body' => file_get_contents($_ENV['STATIC_DATA'] . '/img/pfp.png'), 'headers' => ['content-type' => 'image/png']];</code></pre>
+        <h3>Status Code</h3>
+        You can set a status code easily by returning its number from the handler using <code>'status_code' => xxx</code>
+        <h2>Errors</h2>
+        Now to 404 and 405 error handling.<br>
+        Stitch sends appropriate HTTP status codes on these errros but leaves the output up to you.<br>
+        But don't worry as that's as easy as setting a handler for a route! Everything works the same. Only difference is <code>$vars</code> have the 'code' and 'full' variables which are the status code and the name of the error.
+        <pre><code>Stitch::setErrorHandler(function(array $vars) : array{
+    return [
+        'view' => 'error',
+        'data' => [
+            'code' => $vars['code']-,
+            'error' => $vars['full'],
+            'title' => $vars['code'].':'. $vars['full'],
+            'description' => $vars['code'] == 404 ? 'This page doesn\'t exist.' : 'HTTP method not allowed',
+        ]
+    ];
+});</code></pre>
+        This uses the default error page from the templates. 
+        <div class="p bg-info white small rounded"><span class="large">Tips!</span><br>Since this works like a route, you <b>can put it anywhere</b>. If you use the MVC approach put it under the routes folder in errors.php for example.<br>You can return any type of of content just like any route.</div>
+        <div>
+            <h2>Accessing Medoo and Plates</h2>
+            It's easy and accessible throughout your entire codebase!
+            You can access the database (if you didn't omit it from the .env) just by accessing <code>Stitch::database</code>.<br>
+            You should refer to <a target="_blank" href="https://medoo.in/api/new">Medoo's guidebook</a> for more documentation. It's easy and fast to learn and will save you hours later!
+            <br>
+            You can also access Plates the same way:
+            <pre><code>// This will add data to all templates
+// because there is no second argument for template name
+Stitch::$templates->addData([
+    'title' => 'Stitch',
+    'description' => 'It works.',
+    'header' => 'Stitch',
+]);</code></pre>
+        </div>
+        <div id="plates-alt">
+            <h2>Disabling Plates and/or using another library.</h2>
+            You can disable Plates by removing <code>TEMPLATES</code> from the <code>.env</code> file.<br>
+            To use your own set the <code>Stitch::$templates</code> to your own instance of the templating lib. Access it the same way later.
+        </div>
+    </div>
+    <footer class="small tacenter m">
+        <hr>
+        Stitch is made by <a target="_blank" href="https://asvvvad.eu.org">asvvvad</a> and is available under MIT license on <a target="_blank" href="https://github.com/asvvvad/stitch">Github</a>.<br>This documentation/demo page is using <a href="https://asvvvad.github.io/mono-color">mono/color</a>, My CSS-only micro-framework.
+    </footer>
+</div>

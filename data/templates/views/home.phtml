@@ -99,7 +99,7 @@ CACHE_DISABLED=true</code></pre>
         Third, the templates and views. TEMPLATES is the path to pass to Plates. You may remove it to disable plates if you don't want to use views. To use another templating library <a href="#plates-alt">see this</a> You can only access templates that are under it. VIEWS however is Stitch-specific and is used for when displaying a view. You can set it to <code>.</code> if you prefer to have everything under templates and when you return a view name Stitch will get it from TEMPLATES or anywhere you set it.<br><br>
         Fourth, <code>CONTROLLERS</code> and <code>ROUTES</code> directories. When these are present Stitch automatically autoload content in them allowing you to write your routes in the MVC approach. They can be anywhere as well.<br>
         <div class="p mv bg-warning black small rounded"><span class="large">Warning!</span><br>To disable database or MVC structure <em>remove</em> the variables <b>not</b> set them empty.</div><br>
-        Finally, The <code>CACHE_FILE</code> and <code>CACHE_DISABLED</code>. These are configurations for FastRoute's SimpleDispatcher' cache options. They must be present.
+        Finally, The <code>CACHE_FILE</code> and <code>CACHE_DISABLED</code>. When present, it make stitch use the cachedDispatcer and cache routes. You can use it but still disable caching for development purposes by setting the second variable to true.
         <h2 id="routes">Routes</h2>
         <h3>Syntax</h3>
         <pre><code>Stitch:addRoute('METHOD', '/route/uri[/{optional}]', handler);</code></pre>

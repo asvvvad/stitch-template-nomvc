@@ -42,19 +42,27 @@
         As with all frameworks, you need to have some things in place before using it. Stitch doesn't enfore any structure all you need is the <code>.env</code> file for configuration.
         This part goes through how to create your own structure to understand how customizable it is but it's pretty simple so you'll figure it out if you also just download one of the templates I made and mess around:<br>
         <div class="row tacenter mv" id="templates">
-            <div class="6 col card">
+            <div class="col card">
                 <h2>MVC oriented</h2>
                 <p>Controllers and routes have their own directories and they're loaded automatically to maintain a clean code. You can still use anonymous functions in the routes.</p>
                 <a class="btn pill ph bg-info white" target="_blank" href="https://github.com/asvvvad/stitch-template-mvc"><b>Download</b></a><br>
                 <p class="nano">git clone https://github.com/asvvvad/stitch-template-mvc</p>
             </div>
-            <div class="6 col card">
+            <div class="col card">
                 <h2>No MVC</h2>
                 <p>Simply add routes using anonymous functions which can be in any file or in the index. Just include them before running <code>$stitch->run()</code></p>
                 <a class="btn pill ph bg-info white" target="_blank" href="https://github.com/asvvvad/stitch-template-nomvc"><b>Download</b></a><br>
                 <p class="nano">git clone https://github.com/asvvvad/stitch-template-nomvc</p>
             </div>
         </div>
+        <div class="row">
+            <div class="col card">
+                <h2>Apache HTDOCS</h2>
+                <p>Uses Apache's htdocs structure with the MVC method.</p>
+                <a class="btn pill ph bg-info white" target="_blank" href="https://github.com/asvvvad/stitch-template-htdocs"><b>Download</b></a> <span class="nano">git clone https://github.com/asvvvad/stitch-template-htdocs</span>
+            </div>
+        </div>
+        <br>
         <blockquote class="p bg-warning black small b-accent"><span class="large">Note!</span><br>There is only a structural difference. Both build this website you're reading. You can use the non-controller methods in the MVC ones as well just like you can put a <a href="#mvc-env">couple lines</a> in your <code class="bg-warning b-black black small">.env</code> and you'll have an MVC system.</div>
         <pre id="instantiate"><code>$stitch = new Stitch('../data_directory');</code></pre>
         That's how to instantiate Stitch. The parameter is the directory where the <code>.env</code> file is and other content that shouldn't be public. So keep it out of the document root. However that isn't forced since sometimes you can't or just don't want to which is understandable if you're just prototyping. Just make sure they're not accessible by using .htaccess rules or something equivilant.
